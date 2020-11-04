@@ -5,8 +5,11 @@
 ## Permissions Required
 
 GRANT VIEW DATABASE STATE
+
 GRANT EXECUTE ON sp_synapse_queries
+
 GRANT EXECUTE ON sp_synapse_queries_deepdive
+
 
 ## Files
 
