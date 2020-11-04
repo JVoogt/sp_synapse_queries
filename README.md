@@ -11,7 +11,7 @@ GRANT EXECUTE ON sp_synapse_queries_deepdive
 ## Files
 
 ## How to Use
-So lets get started, where should you begin? That is relatively simple, all you need to do is run the below SQL command. Again, this will only work as explained on zajbppdw01.
+So lets get started, where should you begin? That is relatively simple, all you need to do is run the below SQL command.
 
 ```sql
 EXEC dbo.sp_whoisactive;
