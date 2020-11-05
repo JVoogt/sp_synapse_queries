@@ -1,7 +1,6 @@
 
 
-CREATE PROC sp_synapse_queries_deepdive (@request_id varchar(20), @distributions bit, @tempdb bit)
-AS
+CREATE PROC [dbo].[sp_whoisactive_deepdive] @request_id [varchar](20),@distributions [bit],@tempdb [bit] AS
 
 
 PRINT ' __        ___   _    _  _____      _    __  __   ___   _     ___   ___  _  _____ _   _  ____      _  _____ ___ '
@@ -15,6 +14,7 @@ PRINT 'READ MORE AT: https://docs.microsoft.com/en-us/azure/synapse-analytics/sq
                                                                                                                 
 
 PRINT '-> QUERY STEPS/PLAN'
+PRINT '-> SESSION STEPS AND INFORMATION'
 PRINT '-> LOCK ESCALATION'
 IF @distributions = 1
 	PRINT '-> QUERY STEPS ON ALL DISTRIBUTED DATABASES'
@@ -28,6 +28,27 @@ SELECT	*
 FROM	sys.dm_pdw_request_steps 
 WHERE	request_id = @request_id
 ORDER BY step_index;
+
+SELECT		s.session_id,
+			s.request_id,
+			--s.login_time,
+			s.login_name,
+			a.status,
+			DATEDIFF(MINUTE,a.start_time,GETDATE()) AS running_time	,
+			DATEDIFF(MINUTE,a.submit_time,a.start_time) AS time_in_queue	,
+			DATEADD(HOUR,2,a.submit_time		) AS submit_time		,
+			DATEADD(HOUR,2,a.start_time			) AS start_time			,
+			DATEADD(HOUR,2,a.end_compile_time	) AS end_compile_time	,
+			DATEADD(HOUR,2,a.end_time			) AS end_time			,
+			a.[label],
+			a.command,
+			--l.blocking_session_id,
+			s.app_name,
+			A.resource_class,
+			CONCAT('EXEC dbo.sp_whoisactive_deepdive @request_id = ''',s.request_id,''', @distributions = 0, @tempdb = 0') deepdive
+FROM		sys.dm_pdw_exec_sessions s
+LEFT JOIN	sys.dm_pdw_exec_requests a ON        s.session_id = a.session_id
+WHERE		s.session_id = (SELECT TOP 1 session_id FROM sys.dm_pdw_exec_sessions WHERE request_id = @request_id)
 
 SELECT waits.session_id,
       waits.request_id,  

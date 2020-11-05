@@ -48,9 +48,10 @@ Yes I knew you would not be able to stop thinking about the magic command, so wh
 EXEC dbo.sp_whoisactive_deepdive @request_id = 'QID10741526', @distributions = 0, @tempdb = 0
 ```
 
-If you run it as is, you will get 2 more result sets as below.
+If you run it as is, you will get 3 more result sets as below.
 1.	The Query Steps, a nice way of looking at what step your query is busy with
-2.	Waits, what your query has locks on and what it could be waiting on
+2.	Session information
+3.	Waits, what your query has locks on and what it could be waiting on
 
 If you want to dive even deeper, you can set the @distributions parameter to 1, this will then produce the below.
 1.	The Query Steps on all distribution Nodes
